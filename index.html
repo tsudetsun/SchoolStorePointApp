@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>売店ポイント | 勉強と出費をつなぐ学生向けアプリ</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
   <style>
     :root {
       --ink: #152027;
@@ -68,14 +70,11 @@
     }
 
     .brand-mark {
-      display: grid;
-      place-items: center;
       width: 36px;
       height: 36px;
       border-radius: 8px;
-      color: var(--white);
-      background: var(--green);
-      font-size: 18px;
+      object-fit: cover;
+      box-shadow: 0 8px 18px rgba(0, 84, 198, 0.2);
     }
 
     .nav-links {
@@ -893,7 +892,7 @@
   <header class="site-header">
     <nav class="nav" aria-label="メインナビゲーション">
       <a class="brand" href="#top" aria-label="売店ポイント ホーム">
-        <span class="brand-mark">P</span>
+        <img class="brand-mark" src="icon.png" alt="" width="36" height="36">
         <span>売店ポイント</span>
       </a>
       <div class="nav-links">
