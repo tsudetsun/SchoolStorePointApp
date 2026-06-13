@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>売店ポイント | 勉強と出費をつなぐ学生向けアプリ</title>
+  <style>
+    :root {
+      --ink: #152027;
+      --muted: #62717a;
+      --line: #d9e2e6;
+      --paper: #fbfcf8;
+      --white: #ffffff;
+      --green: #2e8c6a;
+      --green-dark: #17604d;
+      --mint: #dff3e8;
+      --yellow: #f5c84b;
+      --blue: #2f76b7;
+      --red: #d8614d;
+      --shadow: 0 24px 70px rgba(22, 44, 52, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.75;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(217, 226, 230, 0.75);
+      background: rgba(251, 252, 248, 0.88);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: min(1120px, calc(100% - 40px));
+      min-height: 72px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      color: var(--white);
+      background: var(--green);
+      font-size: 18px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a:hover {
+      color: var(--green-dark);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 8px;
+      color: var(--white);
+      background: var(--green-dark);
+      box-shadow: 0 12px 26px rgba(23, 96, 77, 0.2);
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button.secondary {
+      color: var(--green-dark);
+      background: var(--white);
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(115deg, rgba(223, 243, 232, 0.96) 0%, rgba(251, 252, 248, 0.96) 48%, rgba(245, 200, 75, 0.18) 100%),
+        radial-gradient(circle at 88% 22%, rgba(47, 118, 183, 0.18), transparent 32%);
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
+      align-items: center;
+      gap: 48px;
+      width: min(1120px, calc(100% - 40px));
+      min-height: calc(100vh - 72px);
+      margin: 0 auto;
+      padding: 64px 0 78px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid rgba(46, 140, 106, 0.25);
+      border-radius: 999px;
+      color: var(--green-dark);
+      background: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .hero h1 {
+      margin: 22px 0 18px;
+      font-size: clamp(36px, 6vw, 68px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 620px;
+      margin: 0;
+      color: #40515b;
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: 600;
+    }
+
+    .reality-note {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: start;
+      max-width: 650px;
+      margin-top: 24px;
+      padding: 16px;
+      border: 1px solid rgba(216, 97, 77, 0.24);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.76);
+      box-shadow: 0 12px 34px rgba(22, 44, 52, 0.08);
+    }
+
+    .reality-note .badge {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      color: var(--white);
+      background: var(--red);
+      font-weight: 900;
+    }
+
+    .reality-note strong {
+      display: block;
+      line-height: 1.45;
+    }
+
+    .reality-note span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .hero-points {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 36px;
+      max-width: 610px;
+    }
+
+    .mini-stat {
+      min-height: 88px;
+      padding: 14px;
+      border: 1px solid rgba(217, 226, 230, 0.8);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .mini-stat strong {
+      display: block;
+      color: var(--green-dark);
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .mini-stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .app-visual {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 600px;
+    }
+
+    .phone {
+      width: min(365px, 100%);
+      border: 10px solid #24343d;
+      border-radius: 34px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .phone-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 18px 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .phone-screen {
+      padding: 0 18px 20px;
+    }
+
+    .balance {
+      padding: 20px;
+      border-radius: 8px;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--green-dark), var(--green));
+    }
+
+    .balance span {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0.86;
+    }
+
+    .balance strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 42px;
+      line-height: 1;
+    }
+
+    .meter {
+      height: 10px;
+      margin-top: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.24);
+      overflow: hidden;
+    }
+
+    .meter-bar {
+      width: 72%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--yellow);
+    }
+
+    .app-section-title {
+      margin: 18px 0 10px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .task {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #edf2f4;
+    }
+
+    .task-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: var(--mint);
+      font-size: 20px;
+    }
+
+    .task b,
+    .shop-item b {
+      display: block;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .task small,
+    .shop-item small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+
+    .point {
+      color: var(--green-dark);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .shop-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .shop-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid #edf2f4;
+      border-radius: 8px;
+      background: #fbfdfc;
+    }
+
+    .chip {
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: var(--green-dark);
+      background: var(--mint);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .warning-chip {
+      color: #8b3023;
+      background: #ffe7df;
+    }
+
+    .floating-card {
+      position: absolute;
+      right: 0;
+      bottom: 84px;
+      width: 210px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 18px 45px rgba(22, 44, 52, 0.16);
+    }
+
+    .floating-card strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .floating-card span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .floating-card.left {
+      left: 0;
+      right: auto;
+      top: 100px;
+      bottom: auto;
+    }
+
+    section {
+      padding: 86px 0;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .section-heading {
+      max-width: 720px;
+      margin-bottom: 34px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .problem-grid,
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .info-card {
+      min-height: 230px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 10px 34px rgba(22, 44, 52, 0.06);
+    }
+
+    .info-card .icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      background: var(--mint);
+      font-size: 24px;
+    }
+
+    .info-card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .info-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .flow {
+      background: #eef7f1;
+      border-block: 1px solid var(--line);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      counter-reset: step;
+    }
+
+    .step {
+      position: relative;
+      min-height: 230px;
+      padding: 24px;
+      border: 1px solid rgba(46, 140, 106, 0.18);
+      border-radius: 8px;
+      background: var(--white);
+      counter-increment: step;
+    }
+
+    .step::before {
+      content: counter(step, decimal-leading-zero);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 34px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      color: var(--green-dark);
+      background: var(--mint);
+      font-weight: 900;
+    }
+
+    .step h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .demo {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .calculator {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .calculator-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 900;
+    }
+
+    .calculator-body {
+      display: grid;
+      gap: 22px;
+      padding: 24px;
+    }
+
+    .range-row label {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .range-row output {
+      color: var(--green-dark);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      margin-top: 10px;
+      accent-color: var(--green);
+    }
+
+    .result {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .result-box {
+      padding: 16px;
+      border-radius: 8px;
+      background: #f4f8f6;
+    }
+
+    .result-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .result-box strong {
+      display: block;
+      margin-top: 6px;
+      color: var(--green-dark);
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .result-box.alert strong {
+      color: var(--red);
+    }
+
+    .usecase-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .usecase {
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .usecase .icon {
+      display: grid;
+      place-items: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      background: var(--mint);
+      font-size: 24px;
+    }
+
+    .usecase h3 {
+      margin: 0 0 4px;
+      font-size: 18px;
+    }
+
+    .usecase p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sponsor {
+      border-block: 1px solid var(--line);
+      background: #f7f4ec;
+    }
+
+    .sponsor-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .sponsor-panel {
+      border: 1px solid rgba(47, 118, 183, 0.18);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 18px 48px rgba(22, 44, 52, 0.1);
+      overflow: hidden;
+    }
+
+    .sponsor-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 20px;
+      color: var(--white);
+      background: var(--blue);
+      font-weight: 900;
+    }
+
+    .sponsor-panel-body {
+      display: grid;
+      gap: 14px;
+      padding: 20px;
+    }
+
+    .ad-preview {
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+    }
+
+    .ad-preview .logo {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      color: var(--white);
+      background: var(--green-dark);
+      font-weight: 900;
+    }
+
+    .ad-preview b {
+      display: block;
+      line-height: 1.35;
+    }
+
+    .ad-preview small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .sponsor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .sponsor-card {
+      min-height: 170px;
+      padding: 20px;
+      border: 1px solid rgba(47, 118, 183, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.74);
+    }
+
+    .sponsor-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .sponsor-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .cta {
+      color: var(--white);
+      background: var(--green-dark);
+    }
+
+    .cta-panel {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .cta h2 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.2;
+    }
+
+    .cta p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-weight: 600;
+    }
+
+    .cta .button {
+      color: var(--green-dark);
+      background: var(--yellow);
+      box-shadow: none;
+      white-space: nowrap;
+    }
+
+    .footer {
+      padding: 28px 0;
+      color: var(--muted);
+      background: #f4f7f3;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .footer .container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    @media (max-width: 920px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero-inner,
+      .demo,
+      .sponsor-layout,
+      .cta-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-inner {
+        min-height: 0;
+      }
+
+      .app-visual {
+        min-height: 520px;
+      }
+
+      .floating-card {
+        right: 8px;
+      }
+
+      .floating-card.left {
+        left: 8px;
+      }
+
+      .problem-grid,
+      .feature-grid,
+      .sponsor-grid,
+      .steps {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        width: min(100% - 28px, 1120px);
+      }
+
+      .hero-inner,
+      .container {
+        width: min(100% - 28px, 1120px);
+      }
+
+      .hero-inner {
+        gap: 26px;
+        padding: 44px 0 58px;
+      }
+
+      .hero-points,
+      .problem-grid,
+      .feature-grid,
+      .sponsor-grid,
+      .steps,
+      .result {
+        grid-template-columns: 1fr;
+      }
+
+      .app-visual {
+        min-height: 480px;
+      }
+
+      .phone {
+        border-width: 8px;
+        border-radius: 28px;
+      }
+
+      .floating-card {
+        position: static;
+        width: 100%;
+        margin-top: 12px;
+      }
+
+      .app-visual {
+        display: block;
+      }
+
+      section {
+        padding: 62px 0;
+      }
+
+      .cta-panel {
+        text-align: left;
+      }
+
+      .footer .container {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="メインナビゲーション">
+      <a class="brand" href="#top" aria-label="売店ポイント ホーム">
+        <span class="brand-mark">P</span>
+        <span>売店ポイント</span>
+      </a>
+      <div class="nav-links">
+        <a href="#problem">課題</a>
+        <a href="#flow">仕組み</a>
+        <a href="#sponsor">協賛</a>
+        <a href="#demo">利用イメージ</a>
+        <a href="#contact">はじめる</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-inner">
+        <div>
+          <span class="eyebrow">香川高専生向け・学習連動ポイントアプリ</span>
+          <h1>売店での出費を、勉強のモチベーションに変える。</h1>
+          <p class="lead">
+            成績アップや課題提出などの学習行動をポイント化。売店でつい使いすぎるお金を、我慢ではなく「今買っていいか」の判断に変えます。
+          </p>
+          <div class="reality-note">
+            <span class="badge">学生生活</span>
+            <span>
+              <strong>売店での小さな出費と、日々の学習をひとつにつなげる。</strong>
+              <span>売店ポイントは、勉強した分と使える予算を見ながら、パン、ジュース、お菓子、実験用の消耗品まで買い方を決められるようにします。</span>
+            </span>
+          </div>
+          <div class="hero-actions">
+            <a class="button" href="#demo">利用イメージを見る</a>
+            <a class="button secondary" href="#flow">仕組みを知る</a>
+          </div>
+          <div class="hero-points" aria-label="主な特徴">
+            <div class="mini-stat">
+              <strong>学習</strong>
+              <span>自習・課題・成績の伸びを記録</span>
+            </div>
+            <div class="mini-stat">
+              <strong>予算</strong>
+              <span>売店で使える目安を確認</span>
+            </div>
+            <div class="mini-stat">
+              <strong>売店</strong>
+              <span>パン・飲み物・消耗品を管理</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-visual" aria-label="アプリ画面のイメージ">
+          <div class="floating-card left">
+            <span>今週の出費</span>
+            <strong>-620円</strong>
+            <span>先週より売店利用を抑制</span>
+          </div>
+          <div class="phone">
+            <div class="phone-top">
+              <span>9:41</span>
+              <span>売店ポイント</span>
+              <span>●●●</span>
+            </div>
+            <div class="phone-screen">
+              <div class="balance">
+                <span>今月の利用可能ポイント</span>
+                <strong id="heroPoint">1,240P</strong>
+                <div class="meter" aria-hidden="true">
+                  <div class="meter-bar"></div>
+                </div>
+              </div>
+
+              <p class="app-section-title">ポイントが増える行動</p>
+              <div class="task">
+                <span class="task-icon">📘</span>
+                <span>
+                  <b>数学の小テスト +12点</b>
+                  <small>前回より点数アップ</small>
+                </span>
+                <span class="point">+180P</span>
+              </div>
+              <div class="task">
+                <span class="task-icon">✍</span>
+                <span>
+                  <b>レポートを期限内提出</b>
+                  <small>提出習慣をポイント化</small>
+                </span>
+                <span class="point">+80P</span>
+              </div>
+              <div class="task">
+                <span class="task-icon">⏱</span>
+                <span>
+                  <b>自習 45分</b>
+                  <small>昼休みの学習を記録</small>
+                </span>
+                <span class="point">+45P</span>
+              </div>
+
+              <p class="app-section-title">売店利用の目安</p>
+              <div class="shop-list">
+                <div class="shop-item">
+                  <span>
+                    <b>パン・ジュース</b>
+                    <small>昼食や飲み物は優先して確保</small>
+                  </span>
+                  <span class="chip">買ってOK</span>
+                </div>
+                <div class="shop-item">
+                  <span>
+                    <b>お菓子・追加の買い物</b>
+                    <small>今週の予算と学習状況を考慮</small>
+                  </span>
+                  <span class="chip warning-chip">控えめ</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="floating-card">
+            <span>学習達成率</span>
+            <strong>86%</strong>
+            <span>売店予算に反映済み</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="problem">
+      <div class="container">
+        <div class="section-heading">
+          <h2>少額の買い物ほど、気づかないうちに積み上がる。</h2>
+          <p>売店は便利だからこそ、毎日の買い物が習慣になりやすい。だから支出管理を説教にせず、必要な買い物と控える買い物を分けて判断できる形にします。</p>
+        </div>
+        <div class="problem-grid">
+          <article class="info-card">
+            <span class="icon">🥤</span>
+            <h3>毎日の売店利用がやめにくい</h3>
+            <p>パン、ジュース、お菓子、実験用の消耗品など、必要な買い物とつい買う物が日々の予算を削っていきます。</p>
+          </article>
+          <article class="info-card">
+            <span class="icon">📉</span>
+            <h3>ポイントアプリは続かない</h3>
+            <p>普段カードやポイントを使わない学生には、細かい管理より「今日買っていいか」が分かる方が続きやすいです。</p>
+          </article>
+          <article class="info-card">
+            <span class="icon">🎯</span>
+            <h3>学習の成果が見えにくい</h3>
+            <p>大きな目標だけでなく、短い自習や課題提出などの日々の行動を売店利用の判断材料にします。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="flow" id="flow">
+      <div class="container">
+        <div class="section-heading">
+          <h2>「売店禁止」ではなく、「優先順位を決めて買う」へ。</h2>
+          <p>売店の利用制限を罰のように見せず、学習状況と使える予算を見て、必要なものは買い、余分なものは控えられるようにします。</p>
+        </div>
+        <div class="steps">
+          <article class="step">
+            <h3>目標を設定</h3>
+            <p>自習時間、課題提出、苦手科目の復習など、自分に合った学習目標を決めます。</p>
+          </article>
+          <article class="step">
+            <h3>やった分だけ記録</h3>
+            <p>完璧な勉強だけでなく、日々の小さな行動をポイントに変換します。</p>
+          </article>
+          <article class="step">
+            <h3>買っていいか表示</h3>
+            <p>残り現金と学習ポイントを合わせて、パン、ジュース、消耗品、追加のお菓子などの判断を表示します。</p>
+          </article>
+          <article class="step">
+            <h3>明日につなげる</h3>
+            <p>買う、控える、必要なものを優先する判断を自分で決め、学習と支出のバランスを保ちます。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-heading">
+          <h2>カードを使わない学生でも、すぐ判断できる機能。</h2>
+          <p>細かいポイント管理に慣れていなくても、売店に行く前に見れば分かる。学校生活に合わせてシンプルに使えます。</p>
+        </div>
+        <div class="feature-grid">
+          <article class="info-card">
+            <span class="icon">🧮</span>
+            <h3>学習達成ポイント</h3>
+            <p>苦手科目の復習、課題提出、前回より少し伸びた点数など、学習の積み上げを評価します。</p>
+          </article>
+          <article class="info-card">
+            <span class="icon">✅</span>
+            <h3>課題提出ポイント</h3>
+            <p>期限内提出や未提出の解消を評価し、地味だけど成績に効く行動をポイント化します。</p>
+          </article>
+          <article class="info-card">
+            <span class="icon">🛒</span>
+            <h3>予算チェック</h3>
+            <p>日ごと・週ごとに使える目安と、控えた方がいい買い物を分かりやすく表示します。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="sponsor" id="sponsor">
+      <div class="container sponsor-layout">
+        <div>
+          <div class="section-heading">
+            <h2>協賛企業と学生の接点も作れる。</h2>
+            <p>売店ポイントは、学生にとっては支出と学習の管理ツール。企業にとっては、商品を知ってもらう広告枠であり、就職を考える高専生と早い段階でつながる入口になります。</p>
+          </div>
+          <div class="sponsor-grid">
+            <article class="sponsor-card">
+              <h3>購買タイミングに届く広告</h3>
+              <p>パン、飲み物、文具、実験用の消耗品など、学生が買い物を考えるタイミングで商品やキャンペーンを届けられます。</p>
+            </article>
+            <article class="sponsor-card">
+              <h3>就職につながる接点</h3>
+              <p>企業紹介、インターン情報、技術職の仕事紹介を掲載し、進路を考え始める学生との接点を作ります。</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="sponsor-panel" aria-label="協賛企業表示のイメージ">
+          <div class="sponsor-panel-head">
+            <span>協賛企業スペース</span>
+            <span>学校生活に自然に表示</span>
+          </div>
+          <div class="sponsor-panel-body">
+            <div class="ad-preview">
+              <span class="logo">AD</span>
+              <span>
+                <b>学生生活応援セット</b>
+                <small>飲み物・軽食・文具など、売店で使えるキャンペーンを案内</small>
+              </span>
+              <span class="chip">商品広告</span>
+            </div>
+            <div class="ad-preview">
+              <span class="logo">JOB</span>
+              <span>
+                <b>高専生向け企業紹介</b>
+                <small>実験・設計・開発に関わる仕事やインターン情報へつなげる</small>
+              </span>
+              <span class="chip">就職接点</span>
+            </div>
+            <div class="ad-preview">
+              <span class="logo">LAB</span>
+              <span>
+                <b>実験用消耗品の案内</b>
+                <small>レポートや実験前に必要な買い忘れを防ぐ情報を表示</small>
+              </span>
+              <span class="chip">学内需要</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo">
+      <div class="container demo">
+        <div class="section-heading">
+          <h2>学習量と売店利用のバランスを確認。</h2>
+          <p>下のスライダーを動かすと、学習時間、成績の伸び、売店利用予定から、残り予算と買い物判断が変わります。</p>
+          <div class="usecase-list">
+            <div class="usecase">
+              <span class="icon">📚</span>
+              <span>
+                <h3>小さな学習も評価する</h3>
+                <p>大きな成績アップだけでなく、日々の自習や課題提出もポイントとして扱います。</p>
+              </span>
+            </div>
+            <div class="usecase">
+              <span class="icon">💳</span>
+              <span>
+                <h3>必要な買い物を優先する</h3>
+                <p>昼食や実験用の消耗品は優先し、追加のお菓子や飲み物は予算に合わせて調整できます。</p>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="calculator" aria-label="ポイント計算デモ">
+          <div class="calculator-head">
+            <span>売店購入判断デモ</span>
+            <span class="chip">Demo</span>
+          </div>
+          <div class="calculator-body">
+            <div class="range-row">
+              <label for="studyTime">
+                <span>今日の自習時間</span>
+                <output id="studyTimeOut">45分</output>
+              </label>
+              <input id="studyTime" type="range" min="0" max="180" value="45" step="15">
+            </div>
+            <div class="range-row">
+              <label for="scoreUp">
+                <span>前回からの点数アップ</span>
+                <output id="scoreUpOut">12点</output>
+              </label>
+              <input id="scoreUp" type="range" min="0" max="30" value="12" step="1">
+            </div>
+            <div class="range-row">
+              <label for="spend">
+                <span>今日の売店利用予定</span>
+                <output id="spendOut">320円</output>
+              </label>
+              <input id="spend" type="range" min="0" max="1000" value="320" step="20">
+            </div>
+            <div class="result">
+              <div class="result-box">
+                <span>獲得ポイント</span>
+                <strong id="earnPoint">225P</strong>
+              </div>
+              <div class="result-box">
+                <span>利用後の残り予算</span>
+                <strong id="remainPoint">680円</strong>
+              </div>
+              <div class="result-box" id="decisionBox">
+                <span>今日の判断</span>
+                <strong id="buyDecision">買ってOK</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="contact">
+      <div class="container cta-panel">
+        <div>
+          <h2>節約を、我慢だけで終わらせない。</h2>
+          <p>売店ポイントは、学習の努力と日々の支出をつなげることで、学生が自分でお金の使い方を調整できる状態を目指します。</p>
+        </div>
+        <a class="button" href="#top">ページ上部へ戻る</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>売店ポイント</span>
+      <span>Study better. Spend smarter.</span>
+    </div>
+  </footer>
+
+  <script>
+    const studyTime = document.querySelector("#studyTime");
+    const scoreUp = document.querySelector("#scoreUp");
+    const spend = document.querySelector("#spend");
+    const studyTimeOut = document.querySelector("#studyTimeOut");
+    const scoreUpOut = document.querySelector("#scoreUpOut");
+    const spendOut = document.querySelector("#spendOut");
+    const earnPoint = document.querySelector("#earnPoint");
+    const remainPoint = document.querySelector("#remainPoint");
+    const heroPoint = document.querySelector("#heroPoint");
+    const buyDecision = document.querySelector("#buyDecision");
+    const decisionBox = document.querySelector("#decisionBox");
+
+    function formatNumber(value) {
+      return value.toLocaleString("ja-JP");
+    }
+
+    function updateDemo() {
+      const study = Number(studyTime.value);
+      const score = Number(scoreUp.value);
+      const plannedSpend = Number(spend.value);
+      const basePoint = 1000;
+      const baseBudget = 1000;
+      const earned = Math.round(study * 1 + score * 15);
+      const remainingBudget = Math.max(0, baseBudget - plannedSpend);
+      let decision = "買ってOK";
+      let isAlert = false;
+
+      if (study < 30 || score < 5 || remainingBudget < 400) {
+        decision = "控えめに";
+        isAlert = true;
+      } else if (plannedSpend > 350) {
+        decision = "必要なもの優先";
+      }
+
+      studyTimeOut.textContent = `${study}分`;
+      scoreUpOut.textContent = `${score}点`;
+      spendOut.textContent = `${formatNumber(plannedSpend)}円`;
+      earnPoint.textContent = `${formatNumber(earned)}P`;
+      remainPoint.textContent = `${formatNumber(remainingBudget)}円`;
+      buyDecision.textContent = decision;
+      decisionBox.classList.toggle("alert", isAlert);
+      heroPoint.textContent = `${formatNumber(basePoint + earned)}P`;
+    }
+
+    [studyTime, scoreUp, spend].forEach((input) => {
+      input.addEventListener("input", updateDemo);
+    });
+
+    updateDemo();
+  </script>
+</body>
+</html>
